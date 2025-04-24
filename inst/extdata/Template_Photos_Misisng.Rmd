@@ -1,0 +1,104 @@
+
+
+
+```{r}
+run <- T
+
+site <- sites_id[[x]]#stringr::str_extract(pattern = "[P,Q]\\d+-[S,T]\\d+", f1) |> unique()
+devices <- folders_ids[grepl(site, folders_ids)]
+type_site <- case_when(grepl("-\\dA$", devices)~"ARU",
+                       grepl("-\\dC$", devices)~"Camera",
+                       grepl("-\\dAC$", devices)~"ARU & Camera",
+                       TRUE~NA_character_
+                       )
+f1 <- PhotoFilesDir[grep(site, PhotoFilesDir)]
+run_second <- length(devices)==2
+
+```
+
+
+# Site `r site`
+
+
+```{r, results='asis', eval = run}
+
+DataTracker |> filter( SiteID==site) |> 
+  st_drop_geometry() |> 
+  # dplyr::select(PlotID,SiteID, WPT_HD:Comments) |> 
+  dplyr::select(SiteID, Latitude, Longitude, diagnostics) |> 
+  mutate(across(everything(), as.character) ) |> 
+  pivot_longer(cols = everything(), names_to = "Name", 
+               values_to = "Value") |> 
+  knitr::kable()
+  # mutate(
+  #   photo1 = pander::pandoc.image.return(l1[1]),
+  #   photo2 = pander::pandoc.image.return(l1[3]),
+  #        ) |> 
+  # 
+  # pander::pander()
+  
+# for(i in 1:length(l1)) pander::pandoc.image.return(l1[i]) 
+```
+
+
+
+\pagebreak
+{{< pagebreak >}}
+
+## `r paste0(devices[[1]], ": ", type_site[[1]])`
+
+```{r, eval = run}
+l1 <- list.files(f1[[1]], pattern = "jpg", ignore.case = T,full.names = T)
+if(length(l1)<6){
+  npics <- length(l1)
+} else npics <- 6
+
+files <- purrr::map(1:npics, ~{image_read(l1[[.x]]) |> 
+  image_scale("600") })
+```
+
+
+
+```{r, fig.align='center', eval = run}
+if(npics==1) {image_append(files[[1]])
+} else image_append(c(files[[1]], files[[2]],files[[3]]))
+
+```
+
+
+
+```{r, fig.align='center', eval = run}
+if(npics==6) image_append(c(files[[4]],files[[5]], files[[6]]))
+if(npics==5) image_append(files[[5]])
+
+```
+
+\pagebreak
+{{< pagebreak >}}
+
+
+`r if(run_second){paste0("## ", devices[[2]], ": ", type_site[[2]])}`
+
+```{r, eval=run_second}
+l2 <- list.files(f1[[2]], pattern = "jpg", ignore.case = T,full.names = T)
+if(length(l2)<4){
+  npics <- length(l2)
+} else npics <- 4
+
+files2 <- purrr::map(1:npics, ~{image_read(l2[[.x]]) |> 
+  image_scale("150") })
+```
+
+
+```{r, fig.align='center', eval=run_second}
+if(npics==1) {image_append(files2[[1]])
+} else image_append(c(files2[[1]], files2[[2]]))
+
+```
+
+```{r, fig.align='center', eval=run_second}
+if(npics==4) image_append(c(files2[[3]], files2[[4]]))
+if(npics==3) image_append(files2[[3]])
+
+```
+

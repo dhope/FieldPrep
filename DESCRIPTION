@@ -1,0 +1,24 @@
+Package: FieldPrep
+Type: Package
+Title: Functions to assist with field prep
+Version: 0.1.0
+Authors@R: c(
+     person("David", "Hope", , "david.hope@ec.gc.ca", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-2140-4261")),
+     person("Government of Canada", role = c("cph", "fnd"))
+  )
+Description: Placeholder for functions I keep using for field prep
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    ARUtools,
+    dplyr,
+    ggplot2,
+    ggrepel,
+    ggspatial,
+    patchwork,
+    rlang (>= 0.4),
+    sf,
+    withr
+RoxygenNote: 7.3.2
