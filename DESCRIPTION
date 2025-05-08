@@ -15,6 +15,7 @@ Imports:
     ARUtools,
     dplyr,
     ggplot2,
+    ggpubr,
     ggrepel,
     ggspatial,
     patchwork,
