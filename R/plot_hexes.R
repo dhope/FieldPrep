@@ -42,11 +42,22 @@ plot_hex <- function(plot_id,
 
   # site_geom <- ifelse(show_tz,
   #                     )
-# browser()
+  suppressWarnings({lab_loc <- st_centroid(PSU) |>
+    st_coordinates() |>
+    as_tibble() |>
+    mutate(X = X + 1700,
+           Y = Y + 2200,
+           label = plot_id) |>
+    st_as_sf(coords = c("X", "Y"), crs = crs_to_use)
+  })
+
+
   ggplot2::ggplot() +
     gen_geoms(wc_loc, wb_loc, PSU, loc_sites, show_tz, {{site_col_label}}) +
     ggplot2::theme_void() +
-    ggplot2::labs(title = plot_id) +
+    # ggplot2::labs(title = plot_id) +
+    geom_sf_text(data = lab_loc, aes(label = label),
+                 size = 10)+
     ggplot2::theme(legend.position = 'none',
           plot.title = element_text(hjust = .8),
     ) +
@@ -113,7 +124,9 @@ pair_plots <- function(plot_list, legend_plot = NULL){
                 "TRUE"=plot_spacer(),
                 "FALSE" =plot_list[[.x_2]] )
   (plot_spacer() + plot_list[[.x]] + plot_spacer() + o  +
-     plot_layout(widths = c(0.01, 0.45, 0.07, 0.45)))
+      plot_spacer() +
+     plot_layout(widths = c(0.02, 0.45, 0.07, 0.45, 0.005)))
+
   })
   } )
 }
